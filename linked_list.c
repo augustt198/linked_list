@@ -3,6 +3,7 @@
 void linked_list_new(LinkedList *list, int elem_size) {
     list->head      = 0;
     list->tail      = 0;
+    list->curr_node = 0;
     list->elem_size = elem_size;
     list->len       = 0;
 }
@@ -76,6 +77,25 @@ bool linked_list_get(LinkedList *list, int idx, void *data) {
     }
 
     memcpy(data, node->data, list->elem_size);
+
+    return true;
+}
+
+void iter_start(LinkedList *list) {
+    list->curr_node = list->head;
+}
+
+bool iter_has_next(LinkedList *list) {
+    return list->curr_node != 0;
+}
+
+bool iter_next(LinkedList *list, void *data) {
+    if (list->curr_node == 0) {
+        return false;
+    }
+
+    memcpy(data, list->curr_node->data, list->elem_size);
+    list->curr_node = list->curr_node->next;
 
     return true;
 }

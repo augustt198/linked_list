@@ -11,6 +11,7 @@ typedef struct Node {
 typedef struct LinkedList {
     Node *head;
     Node *tail;
+    Node *curr_node;
     int elem_size;
     int len;
 } LinkedList;
@@ -41,3 +42,9 @@ bool linked_list_truncate(LinkedList *list);
 // Returns `true` if `idx` was a valid index
 // into `list`, `false` if not.
 bool linked_list_get(LinkedList *list, int idx, void *data);
+
+void iter_start(LinkedList *list);
+
+bool iter_has_next(LinkedList *list);
+
+bool iter_next(LinkedList *list, void *data);

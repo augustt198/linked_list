@@ -23,6 +23,13 @@ int main() {
         assert(num == i);
     }
 
+    iter_start(&list);
+    for (int i = 0; iter_has_next(&list); i++) {
+        int num;
+        iter_next(&list, &num);
+        assert(num == i);
+    }
+
     // index 1000 should be invalid
     assert(!linked_list_get(&list, 1000, 0));
 
