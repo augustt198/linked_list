@@ -1,5 +1,4 @@
 #include "linked_list.h"
-#include <stdio.h>
 
 void linked_list_new(LinkedList *list, int elem_size) {
     list->head      = 0;
