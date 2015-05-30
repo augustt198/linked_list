@@ -30,6 +30,12 @@ bool linked_list_empty(LinkedList *list);
 // Appends `data` to the end of the list.
 void linked_list_append(LinkedList *list, void *data);
 
+// Prepends `data` to the start of the list.
+void linked_list_prepend(LinkedList *list, void *data);
+
+// Inserts `data` at index `idx`.
+bool linked_list_insert(LinkedList *list, int idx, void *data);
+
 // Removes the last element from list.
 //
 // Returns `true` if any elements were

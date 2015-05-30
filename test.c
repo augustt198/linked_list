@@ -39,5 +39,26 @@ int main() {
 
     assert(linked_list_len(&list) == 0);
 
+    int num = 0;
+    linked_list_append(&list, &num);
+    linked_list_append(&list, &num);
+    
+    num = 1;
+    linked_list_insert(&list, 1, &num);
+
+    assert(linked_list_len(&list) == 3);
+
+    linked_list_get(&list, 1, &num);
+    assert(num == 1);
+
+    num = 2;
+    linked_list_prepend(&list, &num);
+    
+    assert(linked_list_len(&list) == 4);
+
+    linked_list_get(&list, 0, &num);
+    assert(num == 2);
+
+
     printf("All assertions passed!\n");
 }

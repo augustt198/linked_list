@@ -16,10 +16,16 @@ bool linked_list_empty(LinkedList *list) {
     return list->len == 0;
 }
 
+Node *create_node(LinkedList *list, void *data) {
+    Node *node = malloc(sizeof(Node));
+    node->data = malloc(sizeof(list->elem_size));
+    memcpy(node->data, data, list->elem_size);
+
+    return node;
+}
+
 void linked_list_append(LinkedList *list, void *data) {
-    Node *new_node = malloc(sizeof(Node));
-    new_node->data = malloc(sizeof(list->elem_size));
-    memcpy(new_node->data, data, list->elem_size);
+    Node *new_node = create_node(list, data);
 
     if (list->len == 0) {
         list->head = new_node;
@@ -35,6 +41,63 @@ void linked_list_append(LinkedList *list, void *data) {
     }
 
     list->len++;
+}
+
+void linked_list_prepend(LinkedList *list, void *data) {
+    Node *new_node = create_node(list, data);
+
+    if (list->len == 0) {
+        list->head = new_node;
+        list->tail = new_node;
+        new_node->next = NULL;
+        new_node->prev = NULL;
+    } else {
+        list->head->prev = new_node;
+        new_node->next = list->head;
+        new_node->prev = NULL;
+        
+        list->head = new_node;
+    }
+
+    list->len++;
+}
+
+
+bool linked_list_insert(LinkedList *list, int idx, void *data) {
+    if (idx < 0 || idx > list->len)
+        return false;
+
+    if (idx == list->len) {
+        linked_list_append(list, data);
+        return true;
+    } else if (idx == 0) {
+        linked_list_prepend(list, data);
+        return true;
+    }
+
+    Node *new_node = create_node(list, data);
+    Node *node;
+    int mid = list->len / 2;
+    if (idx <= mid) {
+        node = list->head;
+        for (int i = 0; i < idx; i++) {
+            node = node->next;
+        }
+    } else {
+        node = list->tail;
+        for (int i = 0; i < list->len - idx - 1; i++) {
+            node = node->prev;
+        }
+    }
+
+    node->prev->next = new_node;
+    new_node->prev   = node->prev;
+    new_node->next   = node;
+    node->prev       = new_node;
+
+    list->len++;
+
+    return true;
 }
 
 bool linked_list_truncate(LinkedList *list) {
