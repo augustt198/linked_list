@@ -6,6 +6,7 @@ void linked_list_new(LinkedList *list, int elem_size) {
     list->curr_node = 0;
     list->elem_size = elem_size;
     list->len       = 0;
+    pthread_mutex_init(&(list->mutex), NULL);
 }
 
 int linked_list_len(LinkedList *list) {
@@ -25,6 +26,8 @@ Node *create_node(LinkedList *list, void *data) {
 }
 
 void linked_list_append(LinkedList *list, void *data) {
+    pthread_mutex_lock(&(list->mutex));
+
     Node *new_node = create_node(list, data);
 
     if (list->len == 0) {
@@ -41,9 +44,12 @@ void linked_list_append(LinkedList *list, void *data) {
     }
 
     list->len++;
+    pthread_mutex_unlock(&(list->mutex));
 }
 
 void linked_list_prepend(LinkedList *list, void *data) {
+    pthread_mutex_lock(&(list->mutex));
+
     Node *new_node = create_node(list, data);
 
     if (list->len == 0) {
@@ -60,10 +66,15 @@ void linked_list_prepend(LinkedList *list, void *data) {
     }
 
     list->len++;
+
+    pthread_mutex_unlock(&(list->mutex));
+
 }
 
 
 bool linked_list_insert(LinkedList *list, int idx, void *data) {
+    pthread_mutex_lock(&(list->mutex));
+
     if (idx < 0 || idx > list->len)
         return false;
 
@@ -97,10 +108,12 @@ bool linked_list_insert(LinkedList *list, int idx, void *data) {
 
     list->len++;
 
+    pthread_mutex_unlock(&(list->mutex));
     return true;
 }
 
 bool linked_list_truncate(LinkedList *list) {
+    pthread_mutex_lock(&(list->mutex));
     if (list->len < 1) {
         return false;
     }
@@ -116,6 +129,8 @@ bool linked_list_truncate(LinkedList *list) {
 
     free(del_node);
     list->len--;
+
+    pthread_mutex_unlock(&(list->mutex));
     return true;
 }
 
@@ -123,6 +138,7 @@ bool linked_list_get(LinkedList *list, int idx, void *data) {
     if (idx < 0 || idx >= list->len) {
         return false;
     }
+    pthread_mutex_lock(&(list->mutex));
 
     int mid = list->len / 2;
     Node *node;
@@ -140,8 +156,18 @@ bool linked_list_get(LinkedList *list, int idx, void *data) {
     }
 
     memcpy(data, node->data, list->elem_size);
-
+    pthread_mutex_unlock(&(list->mutex));
     return true;
+}
+
+void linked_list_each(LinkedList *list, int (*fn)(int, void *)) {
+    Node *node = list->head;
+    for (int i = 0; node; i++) {
+        if (fn(i, node->data) != 0)
+            break;
+
+        node = node->next;
+    }
 }
 
 void iter_start(LinkedList *list) {

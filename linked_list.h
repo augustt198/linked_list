@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <pthread.h>
 
 typedef struct Node {
     void *data;
@@ -14,6 +15,7 @@ typedef struct LinkedList {
     Node *curr_node;
     int elem_size;
     int len;
+    pthread_mutex_t mutex;
 } LinkedList;
 
 // Initializes the linked list at `list`, with
@@ -41,6 +43,8 @@ bool linked_list_insert(LinkedList *list, int idx, void *data);
 // Returns `true` if any elements were
 // removed, `false` if not.
 bool linked_list_truncate(LinkedList *list);
+
+void linked_list_each(LinkedList *list, int (*fn)(int, void *));
 
 // Fetches the element at `idx` from `list`
 // and places it into `data`.
